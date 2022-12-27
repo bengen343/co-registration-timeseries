@@ -9,6 +9,8 @@ def create_bq_schema(df: pd.DataFrame, integer_col_lst: list) -> list:
             sql_type = 'DATE'
         elif column in integer_col_lst:
             sql_type = 'INT64'
+        elif column == 'RTLA':
+            sql_type = 'FLOAT'
         else:
             sql_type = 'STRING'
                 
@@ -27,6 +29,9 @@ def set_dtypes_on(df: pd.DataFrame, integer_col_lst: list) -> pd.DataFrame:
     for column in list(df):
         if 'date' in column.lower():
             df[column] = pd.to_datetime(df[column], errors='coerce')
+        elif column == 'RTLA':
+            df[column] = pd.to_numeric(df[column], errors='coerce')
+            df[column] = df[column].astype('float64')
         elif column in integer_col_lst:
             df[column] = pd.to_numeric(df[column], errors='coerce')
             df[column] = df[column].astype('float64').astype('Int64')

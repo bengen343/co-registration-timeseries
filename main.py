@@ -41,11 +41,16 @@ congressional_df = congressional_df.groupby('District').sum().reset_index()[col_
 state_senate_df = state_senate_df.groupby('District').sum().reset_index()[col_lst]
 state_house_df = state_house_df.groupby('District').sum().reset_index()[col_lst]
 
+# Add a district type designation
+county_df['District_Type'] = 'County'
+congressional_df['District_Type'] = 'Congressional'
+state_senate_df['District_Type'] = 'State Senate'
+state_house_df['District_Type'] = 'State House'
+
 # Add a row with the statewide totals
-congressional_df.loc[len(congressional_df)] = (['Colorado'] + list(congressional_df[numeric_col_lst].sum(axis=0)))
+congressional_df.loc[len(congressional_df)] = (['Colorado'] + list(congressional_df[numeric_col_lst].sum(axis=0)) + ['Statewide'])
 
 # Check to make sure we have the correct number of districts
-
 check_tup = (
     len(congressional_df) == 9,
     len(state_senate_df) == 35,
@@ -55,7 +60,8 @@ check_tup = (
 if all(check_tup):
     # Join all the different districts into one dataframe.
     registration_df = pd.concat([county_df, congressional_df, state_senate_df, state_house_df])
-    
+    registration_df = registration_df.reset_index(drop=True)
+
     # Calculate totals for overall, for each major party, and for minor parties.
     registration_df['TOT'] = registration_df[numeric_col_lst].sum(axis=1)
     registration_df['REP_TOT'] = registration_df[rep_col_lst].sum(axis=1)
@@ -100,7 +106,7 @@ if all(check_tup):
         registration_df.loc[i, 'RTLA'] = rtla_flt
 
     # Upload the data to BigQuery.
-    registration_integer_cols_lst = [col for col in list(registration_df) if col != 'District']
+    registration_integer_cols_lst = [col for col in list(registration_df) if col not in ['District', 'District_Type', 'RTLA']]
     registration_df = set_dtypes_on(registration_df, registration_integer_cols_lst)
     bq_schema_lst = create_bq_schema(registration_df, registration_integer_cols_lst)
     registration_df.to_gbq(destination_table=bq_timeseries_table_id, project_id=bq_project_name, if_exists='append', table_schema=bq_schema_lst, credentials=bq_credentials)
