@@ -13,7 +13,7 @@ current_month_str = f'{today_dt.month:02d}'
 last_month_name_str = calendar.month_name[int(last_month_str)]
 
 # File name variables
-statistics_file_str = f'{year_str}{current_month_str}01statistics.xlsx'
+statistics_file_str = f'statistics.xlsx'
 statistics_url = f'https://www.sos.state.co.us/pubs/elections/VoterRegNumbers/{year_str}/{last_month_name_str}/{statistics_file_str}'
 turnout_file_str = r'gs://co-turnout-artifacts/co-turnout-rates.csv'
 

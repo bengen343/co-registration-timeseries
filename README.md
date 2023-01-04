@@ -67,6 +67,9 @@ git clone https://github.com/bengen343/co-registration-timeseries.git
 
 6. Install the required dependencies by running `pip install -r requirements.txt`
 
+### Deployment <a name = "deployment></a>
+This is meant to be deployed as a Google Cloud Run Job. To build the package into Google Container Registry you'll need to run the command: `gcloud builds submit --pack image=gcr.io/{PROJECT_ID}/co-registration-timeseries`
+
 
 ## Built Using <a name = "built_using"></a>
 
