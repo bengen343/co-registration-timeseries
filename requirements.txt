@@ -75,4 +75,5 @@ tqdm==4.64.1
 traitlets==5.8.0
 urllib3==1.26.13
 wcwidth==0.2.5
+xlsxwriter
 yarl==1.8.2

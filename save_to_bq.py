@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+from google.cloud import storage
 
 
 def create_bq_schema(df: pd.DataFrame, integer_col_lst: list) -> list:
@@ -41,3 +42,12 @@ def set_dtypes_on(df: pd.DataFrame, integer_col_lst: list) -> pd.DataFrame:
     df = df.replace('nan', np.nan)
 
     return df
+
+
+def gcs_put(file: str, bucket_name: str, bq_project_name: str) -> str:
+    client = storage.Client(project=bq_project_name)
+    bucket = client.get_bucket(bucket_name)
+    blob = bucket.blob(file)
+    blob.upload_from_filename(file)
+
+    return(f"Successfully uploaded {file} to GCS Bucket {bucket_name}.")

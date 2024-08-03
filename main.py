@@ -5,7 +5,7 @@ import requests
 
 from config import *
 from load_timeseries import load_sheet
-from save_to_bq import create_bq_schema, set_dtypes_on
+from save_to_bq import create_bq_schema, gcs_put, set_dtypes_on
 
 response = requests.get(statistics_url)
 
@@ -76,8 +76,9 @@ if all(check_tup):
     fs = gcsfs.GCSFileSystem(project=bq_project_name)
 
     turnout_df = pd.DataFrame()
-    with fs.open(turnout_file_str) as _file:
-        turnout_df = pd.read_csv(_file)
+    # with fs.open(turnout_file_str) as _file:
+    #     turnout_df = pd.read_csv(_file)
+    turnout_df = pd.read_csv('co-turnout-rates.csv')
 
     non_flt_col_lst = [
         'Date',
@@ -111,4 +112,15 @@ if all(check_tup):
     bq_schema_lst = create_bq_schema(registration_df, registration_integer_cols_lst)
     registration_df.to_gbq(destination_table=bq_timeseries_table_id, project_id=bq_project_name, if_exists='append', table_schema=bq_schema_lst, credentials=bq_credentials)
 
+    # Save registration cast to Excel
+    output_xlsx_file = f'output-{statistics_file_str}'
+    writer = pd.ExcelWriter(output_xlsx_file, engine='xlsxwriter')
+    registration_df.to_excel(writer, 'Registration')
+    writer.close()
+    print("Excel Export Complete.")
+
+    # Send the Excel file to Google Cloud Storage
+    gcs_put(output_xlsx_file, gcs_bucket_name, bq_project_name)
+
     os.remove(statistics_file_str)
+    os.remove(output_xlsx_file)
