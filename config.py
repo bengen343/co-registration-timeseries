@@ -7,12 +7,9 @@ from google.oauth2 import service_account
 
 # Time variables
 today_dt = date.today()
-# year_str = str((today_dt + timedelta(-30)).year)
-# last_month_str = f'{((today_dt + timedelta(-30)).month):02d}'
-# current_month_str = f'{today_dt.month:02d}'
-year_str = '2024'
-last_month_str = '06'
-current_month_str = '07'
+year_str = str((today_dt + timedelta(-30)).year)
+last_month_str = f'{((today_dt + timedelta(-30)).month):02d}'
+current_month_str = f'{today_dt.month:02d}'
 
 # File name variables
 statistics_file_str = f'{year_str}{current_month_str}01statistics.xlsx'

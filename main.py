@@ -76,10 +76,9 @@ if all(check_tup):
     fs = gcsfs.GCSFileSystem(project=bq_project_name)
 
     turnout_df = pd.DataFrame()
-    # with fs.open(turnout_file_str) as _file:
-    #     turnout_df = pd.read_csv(_file)
-    turnout_df = pd.read_csv('co-turnout-rates.csv')
-
+    with fs.open(turnout_file_str) as _file:
+        turnout_df = pd.read_csv(_file)
+    
     non_flt_col_lst = [
         'Date',
         'District',
